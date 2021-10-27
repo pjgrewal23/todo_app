@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"github.com/gorilla/mux"
 )
 
 type Task struct {
@@ -54,7 +55,18 @@ func createTask(writer http.ResponseWriter, request *http.Request){
 }
 
 func updateTask(writer http.ResponseWriter, request *http.Request){
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+
+	var task Task
+
+	//finds task in database using id 
+	database.First(&task, params["id"])
 	
+	json.NewDecoder(request.Body).Decode(&task)
+	database.Save(&task)
+
+	json.NewEncoder(writer).Encode(task)
 }
 
 func deleteTask(writer http.ResponseWriter, request *http.Request){
