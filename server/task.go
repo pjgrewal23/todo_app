@@ -15,7 +15,7 @@ type Task struct {
 
 var database *gorm.DB
 var err error
-const connectionString = "sql3447065:bAmenEaEUj@tcp(sql3.freemysqlhosting.net:3306)/sql3447065"
+const connectionString = "sql3447065:bAmenEaEUj@tcp(sql3.freemysqlhosting.net:3306)/sql3447065?charset=utf8mb4&parseTime=True&loc=Local"
 
 
 func initialMigration(){
@@ -31,11 +31,19 @@ func initialMigration(){
 }
 
 func getTasks(writer http.ResponseWriter, request *http.Request){
+	writer.Header().Set("Content-Type", "application/json")
+
+	var tasks []Task
+
+	//gets tasks in desceding order from the database
+	database.Order("created_at desc").Find(&tasks)
+
+	json.NewEncoder(writer).Encode(&tasks)
 
 }
 
 func createTask(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Cpntent-Type", "application/json")
+	writer.Header().Set("Content-Type", "application/json")
 
 	var task Task
 	json.NewDecoder(request.Body).Decode(&task)
