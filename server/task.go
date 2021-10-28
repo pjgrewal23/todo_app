@@ -31,9 +31,15 @@ func initialMigration(){
 	database.AutoMigrate(&Task{})
 }
 
-func getTasks(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Content-Type", "application/json")
+func setupResponse(writer *http.ResponseWriter, req *http.Request) {
+	(*writer).Header().Set("Access-Control-Allow-Origin", "*")
+	(*writer).Header().Set("Content-Type", "application/json")
+    (*writer).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+    (*writer).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+}
 
+func getTasks(writer http.ResponseWriter, request *http.Request){
+	setupResponse(&writer, request)
 	var tasks []Task
 
 	//gets tasks in desceding order from the database
@@ -44,7 +50,7 @@ func getTasks(writer http.ResponseWriter, request *http.Request){
 }
 
 func createTask(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Content-Type", "application/json")
+	setupResponse(&writer, request)
 
 	var task Task
 	json.NewDecoder(request.Body).Decode(&task)
@@ -54,7 +60,7 @@ func createTask(writer http.ResponseWriter, request *http.Request){
 }
 
 func updateTask(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Content-Type", "application/json")
+	setupResponse(&writer, request)
 	params := mux.Vars(request)
 
 	var task Task
@@ -68,7 +74,7 @@ func updateTask(writer http.ResponseWriter, request *http.Request){
 }
 
 func deleteTask(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Content-Type", "application/json")
+	setupResponse(&writer, request)
 
 	params := mux.Vars(request)
 
