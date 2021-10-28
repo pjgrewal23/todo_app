@@ -11,8 +11,6 @@ const TodoModal = props => {
     const [todo, setTodo] = React.useState(props.todo.todo)
 
     const handleTodoChange = (e, { value }) => {
-
-        console.log('in');
         setTodo(value);
     };
     const updateTask = id => {
